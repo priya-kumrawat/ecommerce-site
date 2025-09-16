@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ShopSmart — OrderAssist Demo Store</title>
+  <meta name="description" content="Professional e-commerce UI for ShopSmart — product search, trending items, cart, and support." />
+  <style>
+    :root{
+      --primary:#0f62fe;
+      --muted:#64748b;
+      --bg:#f7fafc;
+      --card:#ffffff;
+      --accent:#06b6d4;
+      --radius:12px;
+      --shadow: 0 6px 18px rgba(16,24,40,0.08);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:#0f172a;font-size:16px;line-height:1.4}
+
+    /* Header */
+    .topbar{background:#fff;border-bottom:1px solid #e6eef7;position:sticky;top:0;z-index:40}
+    .container{max-width:1200px;margin:0 auto;padding:18px}
+    .header{display:flex;align-items:center;gap:18px}
+    .logo{display:flex;align-items:center;gap:10px;font-weight:700}
+    .logo img{height:38px}
+    .search{flex:1;display:flex;align-items:center;background:#f1f5f9;padding:8px 12px;border-radius:10px}
+    .search input{flex:1;border:0;background:transparent;outline:none;font-size:15px}
+    .actions{display:flex;gap:12px;align-items:center}
+    .btn{background:var(--primary);color:#fff;padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
+    .icon-btn{background:transparent;border:0;padding:6px 8px;border-radius:8px;cursor:pointer}
+
+    /* Hero */
+    .hero{background:linear-gradient(90deg,#e6f2ff 0%, #ffffff 100%);padding:36px 0}
+    .hero-inner{display:flex;gap:30px;align-items:center}
+    .hero-text{flex:1}
+    .kicker{color:var(--muted);font-weight:600}
+    .hero h1{margin:8px 0;font-size:32px}
+    .hero p{color:var(--muted);margin:0 0 14px}
+    .hero-cta{display:flex;gap:12px}
+
+    /* Layout */
+    .layout{display:grid;grid-template-columns:260px 1fr;gap:24px;padding:24px 0}
+    .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+
+    /* Filters */
+    .filters h3{margin:0 0 12px}
+    .filter-group{margin-bottom:12px}
+    .range{display:flex;gap:8px}
+    .checkbox{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+
+    /* Products */
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .product{border-radius:12px;overflow:hidden;border:1px solid #eef2f7;background:#fff}
+    .product img{width:100%;display:block}
+    .p-body{padding:12px}
+    .p-title{font-weight:600;margin:0 0 6px}
+    .p-meta{color:var(--muted);font-size:14px}
+    .price-row{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+    .price{font-weight:700}
+    .tag{background:#fff;padding:6px 8px;border-radius:999px;font-size:13px;border:1px solid #e6eef7}
+
+    /* Trending */
+    .trending{display:flex;gap:10px;overflow:auto;padding:8px 0}
+    .trend-card{min-width:200px;border-radius:10px;padding:12px;background:#fff;box-shadow:var(--shadow)}
+
+    /* Cart drawer */
+    .cart-drawer{position:fixed;right:20px;bottom:20px;background:var(--primary);color:#fff;padding:12px 14px;border-radius:999px;box-shadow:0 8px 30px rgba(15,98,254,0.18);cursor:pointer}
+
+    /* Footer */
+    footer{padding:28px 0;color:var(--muted);font-size:14px}
+
+    /* Responsive */
+    @media (max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}.layout{grid-template-columns:1fr}} 
+    @media (max-width:640px){.grid{grid-template-columns:repeat(1,1fr)}.hero-inner{flex-direction:column}.container{padding:12px}.logo span{display:none}}
+
+    /* small utilities */
+    .muted{color:var(--muted)}
+    .flex{display:flex;align-items:center}
+    .space{height:18px}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container">
+      <div class="header">
+        <div class="logo">
+          <img src="https://i.pinimg.com/736x/7d/c2/8e/7dc28e0a7ccd130fded9400bd71fd9fa.jpg" alt="ShopSmart logo">
+          <div>
+            <div style="font-size:14px;color:var(--muted)">OrderAssist</div>
+            <div style="font-size:12px;color:#0f172a;margin-top:2px">Virtual shopping assistant</div>
+          </div>
+        </div>
+
+        <div class="search" role="search">
+          <input id="searchInput" placeholder="Search products, categories, or brands..." aria-label="Search products">
+          <button class="icon-btn" onclick="performSearch()">🔍</button>
+        </div>
+
+        <div class="actions">
+          <button class="icon-btn" title="Help">💬</button>
+          <button class="icon-btn" title="Wishlist">♡</button>
+          <button class="btn" onclick="openCart()">Cart (3)</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-inner">
+        <div class="hero-text">
+          <div class="kicker">Welcome to ShopSmart</div>
+          <h1>Find trending products, great deals, and fast delivery</h1>
+          <p>Shop the latest electronics, home essentials, and fashion — curated just for you. Ask OrderAssist for recommendations, track orders, or raise a support case anytime.</p>
+          <div class="hero-cta">
+            <button class="btn" onclick="document.getElementById('searchInput').focus()">Start Shopping</button>
+            <button class="icon-btn" onclick="showTrending()">See Trending</button>
+          </div>
+        </div>
+        <div style="width:420px">
+          <div style="background:#fff;padding:16px;border-radius:12px;box-shadow:var(--shadow)">
+            <div style="font-weight:700;margin-bottom:8px">Today's Deals</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <div style="border-radius:8px;padding:10px;background:#f8fafc">Up to 40% off</div>
+              <div style="border-radius:8px;padding:10px;background:#f8fafc">Free Shipping</div>
+            </div>
+            <div style="margin-top:12px;color:var(--muted);font-size:14px">Use OrderAssist to check delivery status by order ID or to initiate returns in one click.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="container">
+      <div class="space"></div>
+      <div class="layout">
+
+        <!-- Filters / Sidebar -->
+        <aside class="card filters">
+          <h3>Filters</h3>
+          <div class="filter-group">
+            <label class="muted">Category</label>
+            <div class="checkbox"><input type="checkbox" id="cat1"> <label for="cat1">Electronics</label></div>
+            <div class="checkbox"><input type="checkbox" id="cat2"> <label for="cat2">Home & Kitchen</label></div>
+            <div class="checkbox"><input type="checkbox" id="cat3"> <label for="cat3">Fashion</label></div>
+          </div>
+
+          <div class="filter-group">
+            <label class="muted">Price</label>
+            <div class="range"><input type="number" placeholder="Min" style="flex:1;padding:8px;border-radius:8px;border:1px solid #eef2f7"> <input type="number" placeholder="Max" style="flex:1;padding:8px;border-radius:8px;border:1px solid #eef2f7"></div>
+          </div>
+
+          <div class="filter-group">
+            <label class="muted">Ratings</label>
+            <div class="checkbox"><input type="checkbox" id="r1"> <label for="r1">4 stars & up</label></div>
+            <div class="checkbox"><input type="checkbox" id="r2"> <label for="r2">3 stars & up</label></div>
+          </div>
+
+          <div style="margin-top:12px"><button class="btn" style="width:100%">Apply</button></div>
+        </aside>
+
+        <!-- Product listing -->
+        <section>
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+              <div>
+                <div style="font-weight:700">All Products</div>
+                <div class="muted" style="font-size:13px">Showing 24 results</div>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center">
+                <div class="muted">Sort by</div>
+                <select aria-label="Sort products">
+                  <option>Relevance</option>
+                  <option>Price: Low to High</option>
+                  <option>Price: High to Low</option>
+                  <option>Newest</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-bottom:14px">
+              <div style="font-weight:600;margin-bottom:8px">Trending</div>
+              <div class="trending" id="trendingRow">
+                <div class="trend-card">
+                  <div style="font-weight:700">Wireless Headphones</div>
+                  <div class="muted" style="font-size:13px;margin-top:6px">Best sellers — 4.7⭐</div>
+                </div>
+                <div class="trend-card">
+                  <div style="font-weight:700">Air Purifier</div>
+                  <div class="muted" style="font-size:13px;margin-top:6px">Top rated — 4.8⭐</div>
+                </div>
+                <div class="trend-card">
+                  <div style="font-weight:700">Smartwatch</div>
+                  <div class="muted" style="font-size:13px;margin-top:6px">Hot right now</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid" id="productGrid">
+
+              <!-- Product Card (repeat) -->
+              <article class="product">
+                <img src="https://i.pinimg.com/736x/43/15/ae/4315ae69df9daa2550203db798b0d77f.jpg" alt="Wireless Headphones">
+                <div class="p-body">
+                  <div class="p-title">Wireless Headphones</div>
+                  <div class="p-meta">Bluetooth · 30 hr Battery</div>
+                  <div class="price-row">
+                    <div class="price">₹3,499</div>
+                    <div><button class="tag" onclick="addToCart('Wireless Headphones')">Add</button></div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="product">
+                <img src="https://i.pinimg.com/1200x/9d/13/b5/9d13b59c861acf70e9ee0c1c0b156050.jpg" alt="Air Purifier">
+                <div class="p-body">
+                  <div class="p-title">Air Purifier</div>
+                  <div class="p-meta">Covers up to 500 sq ft · HEPA</div>
+                  <div class="price-row">
+                    <div class="price">₹8,999</div>
+                    <div><button class="tag" onclick="addToCart('Air Purifier')">Add</button></div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="product">
+                <img src="https://i.pinimg.com/736x/2b/c5/a6/2bc5a6a8634fbb69ba0e066aa5676c39.jpg" alt="Smartwatch">
+                <div class="p-body">
+                  <div class="p-title">Smartwatch</div>
+                  <div class="p-meta">Heart-rate monitor · GPS</div>
+                  <div class="price-row">
+                    <div class="price">₹5,199</div>
+                    <div><button class="tag" onclick="addToCart('Smartwatch')">Add</button></div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="product">
+                <img src="https://i.pinimg.com/1200x/13/2b/9c/132b9c778b5bf751c5d39328c1287eb2.jpg" alt="Espresso Machine">
+                <div class="p-body">
+                  <div class="p-title">Espresso Machine</div>
+                  <div class="p-meta">Barista-grade · 20 bar</div>
+                  <div class="price-row">
+                    <div class="price">₹12,499</div>
+                    <div><button class="tag" onclick="addToCart('Espresso Machine')">Add</button></div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="product">
+                <img src="https://i.pinimg.com/1200x/ef/ce/a8/efcea81ef3709e734ce4d1f26123578e.jpg" alt="Floor Lamp">
+                <div class="p-body">
+                  <div class="p-title">Modern Floor Lamp</div>
+                  <div class="p-meta">60W · Warm light</div>
+                  <div class="price-row">
+                    <div class="price">₹2,199</div>
+                    <div><button class="tag" onclick="addToCart('Modern Floor Lamp')">Add</button></div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="product">
+                <img src="https://i.pinimg.com/1200x/27/2b/29/272b2966cb1eb60e6962f769b15b95d0.jpg" alt="Denim Jacket">
+                <div class="p-body">
+                  <div class="p-title">Denim Jacket</div>
+                  <div class="p-meta">Unisex · Multiple sizes</div>
+                  <div class="price-row">
+                    <div class="price">₹1,799</div>
+                    <div><button class="tag" onclick="addToCart('Denim Jacket')">Add</button></div>
+                  </div>
+                </div>
+              </article>
+
+            </div>
+          </div>
+
+          <div style="height:16px"></div>
+
+          <div class="card">
+            <div style="font-weight:700;margin-bottom:8px">Customer Support</div>
+            <div class="muted" style="margin-bottom:8px">Chat with OrderAssist, check order status, or raise a case.</div>
+            <div style="display:flex;gap:8px">
+              <button class="btn" onclick="openChat()">Chat with OrderAssist</button>
+              <button class="icon-btn" onclick="openCase()">Raise a Case</button>
+            </div>
+          </div>
+
+        </section>
+      </div>
+
+      <div style="height:20px"></div>
+
+      <footer class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+          <div>
+            <div style="font-weight:700">ShopSmart</div>
+            <div class="muted">Delivering smiles since 2020</div>
+          </div>
+          <div class="muted">© 2025 ShopSmart Online Store · Terms · Privacy</div>
+        </div>
+      </footer>
+
+    </div>
+  </main>
+
+  <button class="cart-drawer" id="cartBtn" title="Open cart" onclick="openCart()">🛒 View Cart</button>
+
+  <script>
+    // Simple demo interactions (no backend)
+    function performSearch(){
+      const q = document.getElementById('searchInput').value.trim();
+      if(!q){alert('Type something to search — try \"headphones\" or \"lamp\"');return}
+      alert('Searching for: ' + q + '\nThis demo UI can be wired to your product API or Salesforce Agentforce.');
+    }
+    function addToCart(name){
+      alert(name + ' added to cart.');
+    }
+    function openCart(){
+      alert('Cart drawer would open here. Integrate with Salesforce cart/order APIs to show real cart.');
+    }
+    function openChat(){
+      alert('Launching OrderAssist chat. Connect this button to Salesforce Agentforce web chat widget.');
+    }
+    function openCase(){
+      const id = prompt('Enter Order ID to attach (optional)');
+      alert('Case created (demo). In production, call your case creation endpoint and show case number.');
+    }
+    function showTrending(){
+      document.getElementById('trendingRow').scrollIntoView({behavior:'smooth'});
+    }
+  </script>
+  <script type='text/javascript'>
+	function initEmbeddedMessaging() {
+		try {
+			embeddedservice_bootstrap.settings.language = 'en_US'; // For example, enter 'en' or 'en-US'
+
+			embeddedservice_bootstrap.init(
+				'00DgK00000BSWGL',
+				'Github_Messaging_Setting',
+				'https://orgfarm-601ca4b3b3-dev-ed.develop.my.site.com/ESWGithubMessagingSetti1758022219116',
+				{
+					scrt2URL: 'https://orgfarm-601ca4b3b3-dev-ed.develop.my.salesforce-scrt.com'
+				}
+			);
+		} catch (err) {
+			console.error('Error loading Embedded Messaging: ', err);
+		}
+	};
+</script>
+<script type='text/javascript' src='https://orgfarm-601ca4b3b3-dev-ed.develop.my.site.com/ESWGithubMessagingSetti1758022219116/assets/js/bootstrap.min.js' onload='initEmbeddedMessaging()'></script>
+
+</body>
+</html>
+
+
